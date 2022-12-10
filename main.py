@@ -17,13 +17,15 @@ BALL_RADIUS = 7
 
 SCORE_FONT = pygame.font.SysFont("comicsans", 50)
 
+WINNING_SCORE = 10
+
 class Paddle:
     COLOR = WHITE
     VELOCITY = 4
     
     def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
+        self.x = self.original_x = x
+        self.y = self.original_y = y
         self. width = width
         self.height = height
     
@@ -35,6 +37,11 @@ class Paddle:
             self.y -= self.VELOCITY
         else:
             self.y += self.VELOCITY
+    
+    def reset(self):
+        self.x = self.original_x
+        self.y = self.original_y
+
 
 class Ball:
     MAX_VEL = 5
@@ -150,7 +157,27 @@ def main():
         elif ball.x > WIDTH:
             l_score += 1
             ball.reset()
-    
+            
+            
+        won = False
+        if l_score >= WINNING_SCORE:
+           won = True
+           win_text = 'Left Player Won!'
+        elif r_score >= WINNING_SCORE:
+            won = True
+            win_text = 'Right Player Won!'
+        
+        
+        if won:
+            text = SCORE_FONT.render(win_text, 1, WHITE)
+            WIN.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 - text.get_height()//2))            
+            pygame.display.update()
+            pygame.time.delay(5000)
+            ball.reset()
+            left_paddle.reset()
+            right_paddle.reset()
+            l_score = 0
+            r_score = 0
     pygame.quit()
 
 
